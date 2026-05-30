@@ -1,0 +1,35 @@
+name: Auto Blog Management System Bot
+
+on:
+  schedule:
+    # Runs every 12 hours (at minute 0 past hour 0 and 12)
+    - cron: '0 0,12 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install supabase google-generativeai requests python-dotenv beautifulsoup4 lxml
+
+    - name: Run Auto Blogging Bot
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: |
+        # In a real environment, we would run python main.py
+        # Make sure the repository structure is correct before pushing
+        python main.py
