@@ -1,6 +1,10 @@
-supabase==2.5.1
-google-generativeai==0.5.4
-requests==2.32.3
-python-dotenv==1.0.1
-beautifulsoup4==4.12.3
-lxml==5.2.2
+requests
+google-generativeai
+google-genai
+python-dotenv
+cloudinary
+Pillow
+beautifulsoup4
+lxml
+feedparser
+supabase

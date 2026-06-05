@@ -1,35 +1,47 @@
-name: Auto Blog Management System Bot
+name: 🤖 Auto-Blogging Twitter-to-Blog Bot
 
 on:
   schedule:
-    # Runs every 12 hours (at minute 0 past hour 0 and 12)
-    - cron: '0 0,12 * * *'
+    # Runs every 6 hours (at minute 0 past hours 0, 6, 12, and 18 UTC)
+    - cron: '0 0,6,12,18 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: read
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
       with:
-        python-version: '3.10'
+        fetch-depth: 1
 
-    - name: Install dependencies
+    - name: 🐍 Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: 📦 Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install supabase google-generativeai requests python-dotenv beautifulsoup4 lxml
+        pip install -r requirements.txt
 
-    - name: Run Auto Blogging Bot
+    - name: 🚀 Run Auto Blogging Bot
       env:
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        NEXT_API_URL: ${{ secrets.NEXT_API_URL }}
+        BOT_API_SECRET: ${{ secrets.BOT_API_SECRET }}
+        CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+        N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
       run: |
-        # In a real environment, we would run python main.py
-        # Make sure the repository structure is correct before pushing
         python main.py

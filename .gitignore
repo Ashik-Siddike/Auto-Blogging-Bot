@@ -1,0 +1,15 @@
+.env
+.env.local
+.env.development
+.env.production
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.log
+error_log.txt
+output/
+whitlogic.online-Coverage-*/
+scratch/
+*.db
+*.sqlite
