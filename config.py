@@ -27,7 +27,7 @@ def load_multiline_gemini_keys():
         keys = []
         for part in env_val.replace("\n", ",").split(","):
             clean = part.strip()
-            if clean.startswith("AIzaSy") and len(clean) > 30:
+            if (clean.startswith("AIzaSy") or clean.startswith("AQ.")) and len(clean) > 30:
                 keys.append(clean)
         if keys:
             print(f"[CONFIG] Loaded {len(keys)} Gemini key(s) from environment.")
@@ -48,7 +48,7 @@ def load_multiline_gemini_keys():
                         line = line.split('#')[0]
                     for part in line.split(','):
                         clean_key = part.strip()
-                        if clean_key.startswith("AIzaSy") and len(clean_key) > 30:
+                        if (clean_key.startswith("AIzaSy") or clean_key.startswith("AQ.")) and len(clean_key) > 30:
                             keys.append(clean_key)
     except Exception as e:
         print(f"[CONFIG] Error parsing .env manually: {e}")
