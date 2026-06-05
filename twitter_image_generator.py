@@ -71,42 +71,30 @@ Output ONLY the image prompt, nothing else. No quotes, no labels."""
 
     try:
         from google import genai
-        key = GEMINI_API_KEYS[0] if GEMINI_API_KEYS else None
-        if not key:
-            raise ValueError("No Gemini key")
-
-        client = genai.Client(api_key=key)
         preferred_models = [
             'gemini-2.5-flash',
-            'gemini-1.5-flash',
-            'gemini-1.5-pro',
             'gemini-2.0-flash',
-            'gemini-1.0-pro',
-            'gemini-pro',
+            'gemini-1.5-flash',
         ]
         
-        response = None
-        last_error = None
-        for model_name in preferred_models:
+        for i, api_key in enumerate(GEMINI_API_KEYS):
             try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt
-                )
-                if response and response.text:
-                    break
-            except Exception as model_err:
-                last_error = model_err
+                client = genai.Client(api_key=api_key)
+                for model_name in preferred_models:
+                    try:
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=prompt
+                        )
+                        if response and response.text:
+                            image_prompt = response.text.strip()
+                            print(f"  [IMAGEN] Generated prompt: {image_prompt[:100]}...")
+                            return image_prompt
+                    except Exception:
+                        continue
+            except Exception:
                 continue
-                
-        if not response or not response.text:
-            if last_error:
-                raise last_error
-            raise ValueError("Empty response from Gemini")
-
-        image_prompt = response.text.strip()
-        print(f"  [IMAGEN] Generated prompt: {image_prompt[:100]}...")
-        return image_prompt
+        raise ValueError("All Gemini keys exhausted or failed during prompt generation.")
 
     except Exception as e:
         print(f"  [IMAGEN] Prompt generation failed: {e}. Using default.")
